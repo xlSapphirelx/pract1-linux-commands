@@ -1,0 +1,21 @@
+#!/bin/bash
+
+DIR="${1:-.}"
+
+if [ ! -d "$DIR" ]; then
+    echo "Error: '$DIR' is not a directory"
+    exit 1
+fi
+
+find "$DIR" -type f -exec md5sum {} + | sort | awk '
+{
+    if ($1 == prev_hash) {
+        if (!printed) print prev_file
+        print $2
+        printed = 1
+    } else {
+        printed = 0
+    }
+    prev_hash = $1
+    prev_file = $2
+}'

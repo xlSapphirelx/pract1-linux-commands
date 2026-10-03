@@ -1,0 +1,18 @@
+#!/bin/bash
+
+DIR="${1:-.}"
+
+for ext in c js py; do
+    find "$DIR" -type f -name "*.$ext" | while read -r file; do
+        first_line=$(head -n 1 "$file")
+        case "$ext" in
+            c|js) pattern='^[[:space:]]*//' ;;
+            py)   pattern='^[[:space:]]*#' ;;
+        esac
+        if echo "$first_line" | grep -qE "$pattern"; then
+            echo "YES: $file"
+        else
+            echo "NO:  $file"
+        fi
+    done
+done

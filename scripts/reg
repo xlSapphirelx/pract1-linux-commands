@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+    echo "Usage: $0 <program>"
+    exit 1
+fi
+
+PROG="$1"
+
+if [ ! -f "$PROG" ]; then
+    echo "Error: file '$PROG' not found"
+    exit 1
+fi
+
+sudo cp "$PROG" /usr/local/bin/
+sudo chmod 755 "/usr/local/bin/$(basename "$PROG")"
+echo "Registered: $(basename "$PROG") -> /usr/local/bin/"

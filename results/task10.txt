@@ -1,0 +1,2 @@
+/home/xlsapphirelx/pract1/test_empty/empty1.txt
+/home/xlsapphirelx/pract1/test_empty/empty2.txt

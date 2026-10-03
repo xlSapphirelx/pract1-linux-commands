@@ -1,0 +1,7 @@
+h
+include
+int
+main
+printf
+return
+stdio

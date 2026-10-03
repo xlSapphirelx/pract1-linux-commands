@@ -1,0 +1,10 @@
+#!/bin/bash
+
+DIR="${1:-.}"
+
+if [ ! -d "$DIR" ]; then
+    echo "Error: '$DIR' is not a directory"
+    exit 1
+fi
+
+find "$DIR" -type f -empty -print

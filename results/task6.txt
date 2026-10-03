@@ -1,0 +1,4 @@
+YES: /home/xlsapphirelx/pract1/test_comments/a.c
+NO:  /home/xlsapphirelx/pract1/test_comments/b.c
+NO:  /home/xlsapphirelx/pract1/test_comments/d.py
+YES: /home/xlsapphirelx/pract1/test_comments/c.py

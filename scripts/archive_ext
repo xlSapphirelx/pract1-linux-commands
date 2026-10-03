@@ -1,0 +1,19 @@
+#!/bin/bash
+
+if [ $# -lt 2 ]; then
+    echo "Usage: $0 <directory> <extension>"
+    exit 1
+fi
+
+DIR="$1"
+EXT="$2"
+ARCHIVE="archive_${EXT}.tar"
+
+if [ ! -d "$DIR" ]; then
+    echo "Error: '$DIR' is not a directory"
+    exit 1
+fi
+
+find "$DIR" -type f -name "*.${EXT}" -print0 | tar --null -cvf "$ARCHIVE" -T -
+
+echo "Archive created: $ARCHIVE"

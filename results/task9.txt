@@ -1,0 +1,8 @@
+=== INPUT ===
+line1$
+    line2$
+        line3$
+=== OUTPUT ===
+line1$
+^Iline2$
+^I^Iline3$

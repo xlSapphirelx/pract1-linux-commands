@@ -1,0 +1,2 @@
+/home/xlsapphirelx/pract1/test_dups/a.txt
+/home/xlsapphirelx/pract1/test_dups/b.txt

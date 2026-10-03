@@ -1,0 +1,5 @@
+test_archive/a.txt
+test_archive/b.txt
+Archive created: archive_txt.tar
+test_archive/a.txt
+test_archive/b.txt
