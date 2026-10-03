@@ -9,6 +9,3 @@ grep -v '^#' /etc/protocols | grep -v '^$' | sort -k2 -n -r | head -5 | awk '{pr
 
 ## Результат
 См. results/task2.txt
-
-## Примечание
-В моей версии Ubuntu есть дополнительные протоколы ethernet (143) и mptcp (262).
