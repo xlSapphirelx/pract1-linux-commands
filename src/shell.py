@@ -3,23 +3,23 @@ import sys
 
 import commands
 from cmdparser import parse_line
-from config import DEFAULT_VFS_NAME
+from vfs import Vfs
 
 
 class Shell:
-    """Состояние оболочки: имя VFS, потоки вывода и таблица команд."""
+    """Состояние оболочки: VFS, потоки вывода и таблица команд."""
 
-    def __init__(self, vfs_name=DEFAULT_VFS_NAME, out=None, err=None):
+    def __init__(self, vfs=None, out=None, err=None):
         """Создаёт оболочку; потоки по умолчанию — stdout и stderr."""
-        self.vfs_name = vfs_name
+        self.vfs = Vfs.empty() if vfs is None else vfs
         self.out = sys.stdout if out is None else out
         self.err = sys.stderr if err is None else err
         self.running = True
         self.table = dict(commands.COMMANDS)
 
     def prompt(self):
-        """Возвращает приглашение к вводу, содержащее имя VFS."""
-        return f"{self.vfs_name}$ "
+        """Возвращает приглашение: имя VFS и текущий каталог."""
+        return f"{self.vfs.name}:{self.vfs.cwd_path()}$ "
 
     def execute(self, line):
         """Выполняет одну строку и возвращает код завершения."""
