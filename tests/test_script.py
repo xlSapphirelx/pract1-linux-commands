@@ -15,7 +15,9 @@ class ScriptTest(unittest.TestCase):
     def setUp(self):
         """Создаёт оболочку и временный каталог для скриптов."""
         self.out, self.err = helpers.make_buffers()
-        self.shell = Shell(Vfs.empty("v"), self.out, self.err)
+        self.shell = helpers.add_echo(
+            Shell(Vfs.empty("v"), self.out, self.err)
+        )
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
 
@@ -28,26 +30,26 @@ class ScriptTest(unittest.TestCase):
 
     def test_input_and_output_are_shown(self):
         """На экран выводится и ввод, и результат."""
-        failed = run_script(self.shell, self.write("ls a\n"))
+        failed = run_script(self.shell, self.write("echo a\n"))
         self.assertEqual(failed, 0)
-        self.assertEqual(self.out.getvalue(), "v:/$ ls a\nls args=['a']\n")
+        self.assertEqual(self.out.getvalue(), "v:/$ echo a\na\n")
 
     def test_error_lines_are_skipped(self):
         """Ошибочная строка пропускается, остальные выполняются."""
-        failed = run_script(self.shell, self.write("foo\nls\n"))
+        failed = run_script(self.shell, self.write("foo\necho ok\n"))
         self.assertEqual(failed, 1)
-        self.assertIn("ls args=[]", self.out.getvalue())
+        self.assertIn("ok\n", self.out.getvalue())
         self.assertIn("line 1", self.err.getvalue())
 
     def test_comments_and_blank_lines(self):
         """Комментарии и пустые строки игнорируются."""
-        run_script(self.shell, self.write("# note\n\n  \nls\n"))
-        self.assertEqual(self.out.getvalue(), "v:/$ ls\nls args=[]\n")
+        run_script(self.shell, self.write("# note\n\n  \necho x\n"))
+        self.assertEqual(self.out.getvalue(), "v:/$ echo x\nx\n")
 
     def test_exit_stops_script(self):
         """После exit остальные строки не выполняются."""
-        run_script(self.shell, self.write("exit\nls\n"))
-        self.assertNotIn("ls args", self.out.getvalue())
+        run_script(self.shell, self.write("exit\necho never\n"))
+        self.assertNotIn("never", self.out.getvalue())
         self.assertFalse(self.shell.running)
 
     def test_missing_script_is_reported(self):

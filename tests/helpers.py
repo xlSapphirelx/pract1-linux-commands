@@ -16,3 +16,15 @@ def make_buffers():
 def example_vfs(name):
     """Путь к примеру VFS из каталога examples/vfs."""
     return os.path.join(ROOT, "examples", "vfs", name)
+
+
+def add_echo(shell):
+    """Добавляет в оболочку тестовую команду echo."""
+
+    def echo(sh, args):
+        """Печатает аргументы через пробел."""
+        print(" ".join(args), file=sh.out)
+        return 0
+
+    shell.table["echo"] = echo
+    return shell

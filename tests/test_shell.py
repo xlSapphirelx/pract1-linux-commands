@@ -1,4 +1,4 @@
-"""Тесты оболочки и REPL (этап 1)."""
+"""Тесты оболочки и REPL."""
 import unittest
 
 import helpers
@@ -19,15 +19,11 @@ class ShellTest(unittest.TestCase):
         """Приглашение содержит имя VFS и текущий каталог."""
         self.assertEqual(self.shell.prompt(), "myvfs:/$ ")
 
-    def test_ls_stub_prints_name_and_args(self):
-        """ls выводит своё имя и аргументы."""
-        self.assertEqual(self.shell.execute("ls -l /x"), EXIT_OK)
-        self.assertEqual(self.out.getvalue(), "ls args=['-l', '/x']\n")
-
-    def test_cd_stub_prints_name_and_args(self):
-        """cd выводит своё имя и аргументы."""
-        self.shell.execute("cd a b")
-        self.assertEqual(self.out.getvalue(), "cd args=['a', 'b']\n")
+    def test_registered_command_is_executed(self):
+        """Команда из таблицы получает аргументы."""
+        helpers.add_echo(self.shell)
+        self.assertEqual(self.shell.execute("echo a  b"), EXIT_OK)
+        self.assertEqual(self.out.getvalue(), "a b\n")
 
     def test_unknown_command(self):
         """Неизвестная команда даёт ошибку и код 127."""
@@ -51,10 +47,10 @@ class ReplTest(unittest.TestCase):
     def test_repl_runs_until_exit(self):
         """REPL выполняет команды до exit и игнорирует остальное."""
         out, err = helpers.make_buffers()
-        shell = Shell(Vfs.empty("v"), out, err)
-        lines = iter(["ls", "exit", "ls never"])
+        shell = helpers.add_echo(Shell(Vfs.empty("v"), out, err))
+        lines = iter(["echo hi", "exit", "echo never"])
         repl(shell, lambda prompt: next(lines))
-        self.assertEqual(out.getvalue(), "ls args=[]\n")
+        self.assertEqual(out.getvalue(), "hi\n")
 
     def test_repl_stops_on_eof(self):
         """Конец ввода завершает REPL без ошибки."""
