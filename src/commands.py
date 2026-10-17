@@ -1,7 +1,7 @@
 """Реализации команд эмулятора."""
 import time
 
-from vfs import VfsError
+from vfs import VfsError, iter_nodes
 
 EXIT_OK = 0
 EXIT_ERROR = 1
@@ -9,6 +9,7 @@ EXIT_NOT_FOUND = 127
 
 ROOT_PATH = "/"
 LS_FLAGS = "la"
+CHOWN_FLAGS = "R"
 DIR_PERMS = "drwxr-xr-x"
 FILE_PERMS = "-rw-r--r--"
 DIR_SIZE = 4096
@@ -193,10 +194,50 @@ def cmd_tail(shell, args):
     return status
 
 
+def _parse_owner(spec):
+    """Разбирает ВЛАДЕЛЕЦ[:ГРУППА]; пустая часть означает «не менять»."""
+    owner, _, group = spec.partition(":")
+    if not owner and not group:
+        raise UsageError(f"invalid user: '{spec}'")
+    return owner or None, group or None
+
+
+def _apply_owner(node, owner, group):
+    """Меняет владельца и/или группу узла VFS (только в памяти)."""
+    if owner is not None:
+        node.owner = owner
+    if group is not None:
+        node.group = group
+
+
+def cmd_chown(shell, args):
+    """chown [-R] ВЛАДЕЛЕЦ[:ГРУППА] ПУТЬ...: меняет владельца в VFS."""
+    try:
+        flags, rest = parse_flags(args, CHOWN_FLAGS)
+        if not rest:
+            raise UsageError("missing operand")
+        owner, group = _parse_owner(rest[0])
+    except UsageError as exc:
+        return fail(shell, f"chown: {exc}")
+    if len(rest) == 1:
+        return fail(shell, f"chown: missing operand after '{rest[0]}'")
+    status = EXIT_OK
+    for path in rest[1:]:
+        try:
+            node = shell.vfs.lookup(path)
+        except VfsError as exc:
+            status = fail(shell, f"chown: cannot access '{path}': {exc}")
+            continue
+        for target in iter_nodes(node) if "R" in flags else [node]:
+            _apply_owner(target, owner, group)
+    return status
+
+
 COMMANDS = {
     "ls": cmd_ls,
     "cd": cmd_cd,
     "date": cmd_date,
     "tail": cmd_tail,
+    "chown": cmd_chown,
     "exit": cmd_exit,
 }
