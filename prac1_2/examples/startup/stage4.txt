@@ -1,0 +1,39 @@
+# Стартовый скрипт этапа 4. Запуск с VFS examples/vfs/deep
+# --- ls: обычный, -a, -l, -la, несколько путей, ошибки ---
+ls
+ls -a
+ls -l
+ls -la /docs
+ls /docs /a/top.txt /a/b
+ls /nope
+ls -z
+# --- cd: вложенные каталоги, .., корень, ошибки ---
+cd a/b
+ls
+cd c
+ls -l
+cd ../..
+cd /docs/log
+cd
+cd a/top.txt
+cd nope
+cd a b
+# --- tail: по умолчанию, -n, несколько файлов, ошибки ---
+tail /docs/log/app.log
+tail -n 3 /docs/log/app.log
+tail -n2 /docs/log/app.log
+tail -n 0 /docs/log/app.log
+tail -n 1 /a/top.txt /a/b/mid.txt
+tail -n 99 /a/b/c/deep.txt
+tail /nope
+tail /docs
+tail -n x /a/top.txt
+tail
+# --- date: по умолчанию, UTC, форматы, ошибки ---
+date
+date -u
+date +%Y-%m-%d
+date -u +%H:%M:%S
+date tomorrow
+date +%Y +%m
+exit

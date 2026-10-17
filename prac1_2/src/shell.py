@@ -1,0 +1,53 @@
+"""Оболочка эмулятора: выполнение команд и интерактивный цикл (REPL)."""
+import sys
+import time
+
+import commands
+from cmdparser import parse_line
+from vfs import Vfs
+
+
+class Shell:
+    """Состояние оболочки: VFS, потоки вывода и таблица команд."""
+
+    def __init__(self, vfs=None, out=None, err=None, clock=None):
+        """Создаёт оболочку.
+
+        По умолчанию вывод идёт в stdout и stderr, а время берётся
+        из time.time. Параметр clock позволяет подменить часы в тестах.
+        """
+        self.vfs = Vfs.empty() if vfs is None else vfs
+        self.out = sys.stdout if out is None else out
+        self.err = sys.stderr if err is None else err
+        self.clock = time.time if clock is None else clock
+        self.running = True
+        self.table = dict(commands.COMMANDS)
+
+    def prompt(self):
+        """Возвращает приглашение: имя VFS и текущий каталог."""
+        return f"{self.vfs.name}:{self.vfs.cwd_path()}$ "
+
+    def execute(self, line):
+        """Выполняет одну строку и возвращает код завершения."""
+        name, args = parse_line(line)
+        if name is None:
+            return commands.EXIT_OK
+        handler = self.table.get(name)
+        if handler is None:
+            print(f"{name}: command not found", file=self.err)
+            return commands.EXIT_NOT_FOUND
+        return handler(self, args)
+
+
+def repl(shell, input_func=input):
+    """Читает команды пользователя, пока оболочка не завершена."""
+    while shell.running:
+        try:
+            line = input_func(shell.prompt())
+        except EOFError:
+            print(file=shell.out)
+            break
+        except KeyboardInterrupt:
+            print(file=shell.out)
+            continue
+        shell.execute(line)

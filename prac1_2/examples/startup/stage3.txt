@@ -1,0 +1,10 @@
+# Стартовый скрипт этапа 3: все команды, реализованные к этому этапу
+ls
+ls /a/b/c
+cd a
+cd ..
+cd
+unknown-command arg
+ls -l .
+exit
+ls after-exit
