@@ -1,0 +1,35 @@
+# Стартовый скрипт этапа 5. Запуск с VFS examples/vfs/deep
+# --- начальное состояние ---
+ls -l /a
+# --- смена владельца ---
+chown alice /a/top.txt
+ls -l /a/top.txt
+# --- владелец и группа ---
+chown bob:staff /a/top.txt
+ls -l /a/top.txt
+# --- только группа ---
+chown :admins /a/top.txt
+ls -l /a/top.txt
+# --- владелец с пустой группой (группа не меняется) ---
+chown carol: /a/top.txt
+ls -l /a/top.txt
+# --- несколько путей и относительные пути ---
+cd docs
+chown dave readme.txt log
+ls -l
+# --- без -R содержимое каталога не меняется ---
+ls -l log
+# --- рекурсивно ---
+chown -R eve:ops /a
+ls -l /a
+ls -l /a/b
+ls -l /a/b/c
+# --- ошибки ---
+chown
+chown alice
+chown -x alice /a
+chown : /a
+chown alice /nope
+chown frank /nope /a/top.txt
+ls -l /a
+exit
