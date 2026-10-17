@@ -19,3 +19,7 @@ REPORT.txt
 all_tasks.txt
 CHEATSHEET.md
 history.txt
+__pycache__/
+*.pyc
+*.save
+*~
