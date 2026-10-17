@@ -1,0 +1,9 @@
+//start
+cd "$(dirname "$0")" && python3 src/main.py --vfs examples/vfs/deep --script examples/startup/stage4.txt
+
+//test
+cd "$(dirname "$0")" && python3 -m unittest discover -s tests -v
+
+//scripts
+bash scripts/stage2_params.sh
+bash scripts/stage3_vfs.sh
