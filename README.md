@@ -328,3 +328,6 @@ find "$DIR" -type f -empty -print
 chmod +x find_empty
 ./find_empty test_empty
 ```
+## Практическая работа №1, этап 2
+
+Эмулятор оболочки (вариант 20) находится в папке `prac1_2`.
