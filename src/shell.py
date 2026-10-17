@@ -3,14 +3,14 @@ import sys
 
 import commands
 from cmdparser import parse_line
-
-DEFAULT_VFS_NAME = "vfs"
+from config import DEFAULT_VFS_NAME
 
 
 class Shell:
     """Состояние оболочки: имя VFS, потоки вывода и таблица команд."""
 
     def __init__(self, vfs_name=DEFAULT_VFS_NAME, out=None, err=None):
+        """Создаёт оболочку; потоки по умолчанию — stdout и stderr."""
         self.vfs_name = vfs_name
         self.out = sys.stdout if out is None else out
         self.err = sys.stderr if err is None else err

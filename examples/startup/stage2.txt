@@ -1,0 +1,9 @@
+# Стартовый скрипт этапа 2: диалог, пропуск ошибочных строк
+ls
+ls -l /a /b
+
+cd docs
+foo bar
+cd
+exit
+ls after-exit
