@@ -6,6 +6,7 @@ import unittest
 import helpers
 from script import run_script
 from shell import Shell
+from vfs import Vfs
 
 
 class ScriptTest(unittest.TestCase):
@@ -14,7 +15,7 @@ class ScriptTest(unittest.TestCase):
     def setUp(self):
         """Создаёт оболочку и временный каталог для скриптов."""
         self.out, self.err = helpers.make_buffers()
-        self.shell = Shell("v", self.out, self.err)
+        self.shell = Shell(Vfs.empty("v"), self.out, self.err)
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
 
@@ -29,7 +30,7 @@ class ScriptTest(unittest.TestCase):
         """На экран выводится и ввод, и результат."""
         failed = run_script(self.shell, self.write("ls a\n"))
         self.assertEqual(failed, 0)
-        self.assertEqual(self.out.getvalue(), "v$ ls a\nls args=['a']\n")
+        self.assertEqual(self.out.getvalue(), "v:/$ ls a\nls args=['a']\n")
 
     def test_error_lines_are_skipped(self):
         """Ошибочная строка пропускается, остальные выполняются."""
@@ -41,7 +42,7 @@ class ScriptTest(unittest.TestCase):
     def test_comments_and_blank_lines(self):
         """Комментарии и пустые строки игнорируются."""
         run_script(self.shell, self.write("# note\n\n  \nls\n"))
-        self.assertEqual(self.out.getvalue(), "v$ ls\nls args=[]\n")
+        self.assertEqual(self.out.getvalue(), "v:/$ ls\nls args=[]\n")
 
     def test_exit_stops_script(self):
         """После exit остальные строки не выполняются."""

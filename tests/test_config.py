@@ -1,4 +1,6 @@
 """Тесты параметров командной строки."""
+import contextlib
+import io
 import unittest
 
 import helpers  # noqa: F401
@@ -22,8 +24,10 @@ class ConfigTest(unittest.TestCase):
 
     def test_unknown_option_exits(self):
         """Неизвестный параметр завершает разбор с кодом 2."""
-        with self.assertRaises(SystemExit) as ctx:
-            parse_args(["--bogus"])
+        stderr = io.StringIO()
+        with contextlib.redirect_stderr(stderr):
+            with self.assertRaises(SystemExit) as ctx:
+                parse_args(["--bogus"])
         self.assertEqual(ctx.exception.code, 2)
 
     def test_debug_lists_all_parameters(self):

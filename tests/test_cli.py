@@ -26,15 +26,27 @@ class CliTest(unittest.TestCase):
 
     def test_debug_output_of_parameters(self):
         """При запуске выводятся все заданные параметры."""
-        result = run_cli("--vfs", "some/dir")
+        result = run_cli("--vfs", helpers.example_vfs("minimal"))
         self.assertEqual(result.returncode, 0)
-        self.assertIn("vfs = some/dir", result.stdout)
+        self.assertIn("vfs = ", result.stdout)
         self.assertIn("script = <not set>", result.stdout)
-        self.assertIn("dir$", result.stdout)
 
     def test_unknown_option(self):
         """Неизвестный параметр даёт код 2."""
         self.assertEqual(run_cli("--zzz").returncode, EXIT_USAGE)
+
+    def test_vfs_is_loaded(self):
+        """VFS загружается из директории, приглашение содержит её имя."""
+        result = run_cli("--vfs", helpers.example_vfs("deep"))
+        self.assertEqual(result.returncode, 0)
+        self.assertIn("loaded: 5 dirs, 6 files", result.stdout)
+        self.assertIn("deep:/$", result.stdout)
+
+    def test_missing_vfs_directory(self):
+        """Несуществующая директория VFS даёт код 2 и сообщение."""
+        result = run_cli("--vfs", "no/such/dir")
+        self.assertEqual(result.returncode, EXIT_USAGE)
+        self.assertIn("is not a directory", result.stderr)
 
     def test_script_error_is_reported(self):
         """Ошибка скрипта сообщается в stderr."""

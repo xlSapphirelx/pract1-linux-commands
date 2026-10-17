@@ -4,6 +4,7 @@ import unittest
 import helpers
 from commands import EXIT_NOT_FOUND, EXIT_OK
 from shell import Shell, repl
+from vfs import Vfs
 
 
 class ShellTest(unittest.TestCase):
@@ -12,11 +13,11 @@ class ShellTest(unittest.TestCase):
     def setUp(self):
         """Создаёт оболочку с буферами вывода."""
         self.out, self.err = helpers.make_buffers()
-        self.shell = Shell("myvfs", self.out, self.err)
+        self.shell = Shell(Vfs.empty("myvfs"), self.out, self.err)
 
     def test_prompt_contains_vfs_name(self):
-        """Приглашение содержит имя VFS."""
-        self.assertIn("myvfs", self.shell.prompt())
+        """Приглашение содержит имя VFS и текущий каталог."""
+        self.assertEqual(self.shell.prompt(), "myvfs:/$ ")
 
     def test_ls_stub_prints_name_and_args(self):
         """ls выводит своё имя и аргументы."""
@@ -50,7 +51,7 @@ class ReplTest(unittest.TestCase):
     def test_repl_runs_until_exit(self):
         """REPL выполняет команды до exit и игнорирует остальное."""
         out, err = helpers.make_buffers()
-        shell = Shell("v", out, err)
+        shell = Shell(Vfs.empty("v"), out, err)
         lines = iter(["ls", "exit", "ls never"])
         repl(shell, lambda prompt: next(lines))
         self.assertEqual(out.getvalue(), "ls args=[]\n")
@@ -58,7 +59,7 @@ class ReplTest(unittest.TestCase):
     def test_repl_stops_on_eof(self):
         """Конец ввода завершает REPL без ошибки."""
         out, err = helpers.make_buffers()
-        shell = Shell("v", out, err)
+        shell = Shell(Vfs.empty("v"), out, err)
 
         def raise_eof(prompt):
             """Имитирует конец ввода."""
