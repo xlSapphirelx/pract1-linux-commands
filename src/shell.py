@@ -1,5 +1,6 @@
 """Оболочка эмулятора: выполнение команд и интерактивный цикл (REPL)."""
 import sys
+import time
 
 import commands
 from cmdparser import parse_line
@@ -9,11 +10,16 @@ from vfs import Vfs
 class Shell:
     """Состояние оболочки: VFS, потоки вывода и таблица команд."""
 
-    def __init__(self, vfs=None, out=None, err=None):
-        """Создаёт оболочку; потоки по умолчанию — stdout и stderr."""
+    def __init__(self, vfs=None, out=None, err=None, clock=None):
+        """Создаёт оболочку.
+
+        По умолчанию вывод идёт в stdout и stderr, а время берётся
+        из time.time. Параметр clock позволяет подменить часы в тестах.
+        """
         self.vfs = Vfs.empty() if vfs is None else vfs
         self.out = sys.stdout if out is None else out
         self.err = sys.stderr if err is None else err
+        self.clock = time.time if clock is None else clock
         self.running = True
         self.table = dict(commands.COMMANDS)
 
