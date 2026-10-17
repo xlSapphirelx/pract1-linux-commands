@@ -61,6 +61,7 @@ class ReplTest(unittest.TestCase):
         shell = Shell("v", out, err)
 
         def raise_eof(prompt):
+            """Имитирует конец ввода."""
             raise EOFError
 
         repl(shell, raise_eof)
